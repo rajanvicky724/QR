@@ -1,0 +1,6 @@
+streamlit
+pandas
+qrcode[pil]
+PyPDF2
+reportlab
+pillow
