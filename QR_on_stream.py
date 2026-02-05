@@ -141,3 +141,4 @@ if uploaded_pdf and uploaded_csv:
                 
             except Exception as e:
                 st.error(f"Error: {e}")
+
