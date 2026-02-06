@@ -4,3 +4,4 @@ qrcode[pil]
 PyPDF2
 reportlab
 pillow
+streamlit-extras
