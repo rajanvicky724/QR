@@ -138,12 +138,13 @@ if uploaded_pdf and uploaded_csv:
                     data=output_buffer,
                     file_name="output_qr.pdf",
                     mime="application/pdf",
-                    type="primary"
-            button(username="https://buymeacoffee.com/vigneshna", floating=True, width=221),   
+                    type="primary",
+            button(username="https://buymeacoffee.com/vigneshna", floating=True, width=221) 
                 )     
             except Exception as e:
                 st.error(f"Error: {e}")
                 
+
 
 
 
