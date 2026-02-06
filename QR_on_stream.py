@@ -10,15 +10,37 @@ import shutil
 from io import BytesIO
 from streamlit_extras.buy_me_a_coffee import button
 
-# --- PAGE CONFIG ---
-st.set_page_config(page_title="QR Code PDF Generator", page_icon="📄", layout="wide")
+# --- 1. SEO & PAGE CONFIG ---
+st.set_page_config(
+    page_title="Free Bulk QR Code Generator from URL | CSV to PDF Tool", 
+    page_icon="📄", 
+    layout="wide",
+    initial_sidebar_state="expanded",
+    menu_items={
+        'Get Help': 'https://www.buymeacoffee.com/vigneshna',
+        'About': "Free tool to generate bulk QR codes from CSV and overlay them on PDFs."
+    }
+)
+
+# --- 2. HIDDEN SEO TEXT (Helps Google find you) ---
+st.markdown(
+    """
+    <div style="display:none;">
+    <h1>Free Bulk QR Code Generator Online</h1>
+    <p>Generate thousands of QR codes from CSV URLs instantly. 
+    Best free tool to convert Excel/CSV links to printable PDF QR codes. 
+    Features: Bulk generation, PDF overlay, position customization, and high-quality download.</p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 st.title("📄 QR Code PDF Generator")
+st.caption("🚀 The easiest way to create bulk QR codes from a CSV list and place them onto your PDF files.")
 
 # --- SIDEBAR SETTINGS ---
 st.sidebar.header("⚙️ Position & Size")
 
-# Alignment Selector
 h_anchor = st.sidebar.radio(
     "Horizontal Reference Point:",
     ["From Right Edge", "From Left Edge"],
@@ -72,7 +94,7 @@ if uploaded_pdf and uploaded_csv:
                 
                 df = pd.read_csv(uploaded_csv)
                 if "URL" not in df.columns:
-                    st.error("❌ CSV must contain a 'URL' column!")
+                    st.error("❌ CSV must contain a column named 'URL'!")
                     st.stop()
                 
                 reader = PdfReader(uploaded_pdf)
@@ -82,7 +104,7 @@ if uploaded_pdf and uploaded_csv:
                 progress_bar = st.progress(0)
                 
                 for i in range(total_pages):
-                    if i >= len(df): break # Stop if no more URLs
+                    if i >= len(df): break 
                     
                     url = df.iloc[i]["URL"]
                     
@@ -95,7 +117,7 @@ if uploaded_pdf and uploaded_csv:
                     overlay_pdf = os.path.join(qr_folder, f"overlay_{i}.pdf")
                     c = canvas.Canvas(overlay_pdf, pagesize=letter)
                     
-                    # Calculate Position
+                    # Position Logic
                     page_width = float(reader.pages[i].mediabox.width)
                     
                     if h_anchor == "From Right Edge":
@@ -105,7 +127,7 @@ if uploaded_pdf and uploaded_csv:
 
                     y = y_position
                     
-                    # Draw QR & Text
+                    # Draw
                     c.drawImage(qr_path, x, y, width=qr_size, height=qr_size)
                     
                     if show_text and custom_text:
@@ -122,15 +144,14 @@ if uploaded_pdf and uploaded_csv:
                     
                     progress_bar.progress((i + 1) / total_pages)
                 
-                # Save & Download Logic
+                # Output
                 output_buffer = BytesIO()
                 writer.write(output_buffer)
                 output_buffer.seek(0)
                 shutil.rmtree(temp_dir)
                 
-                st.success("✅ Done!")
+                st.success("✅ PDF Generated Successfully!")
                 
-                # Corrected Download Button Block
                 st.download_button(
                     label="⬇️ Download Final PDF",
                     data=output_buffer,
@@ -142,6 +163,21 @@ if uploaded_pdf and uploaded_csv:
             except Exception as e:
                 st.error(f"Error: {e}")
 
+# --- CONTENT FOR USERS & SEO ---
+st.markdown("---")
+with st.expander("ℹ️ How to use this Bulk QR Generator", expanded=True):
+    st.markdown("""
+    ### 📌 How to create bulk QR codes for PDF?
+    1. **Upload your PDF**: Select the document you want to modify (e.g., certificates, letters).
+    2. **Upload CSV Data**: Create a CSV file with a header row named `URL` containing your links.
+    3. **Customize Position**: Use the sidebar to move the QR code to the perfect spot.
+    4. **Download**: Click "Generate" to get a single PDF with unique QR codes on every page.
+    
+    **✨ Key Features:**
+    - **Bulk Processing**: Generate 100s of QR codes in seconds.
+    - **Privacy First**: Files are processed in memory and not stored.
+    - **Fully Customizable**: Adjust size, position, and text.
+    """)
+
 # --- FLOATING COFFEE BUTTON ---
-# This sits outside the main logic so it always appears
 button(username="vigneshna", floating=True, width=221)
