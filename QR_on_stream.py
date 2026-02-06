@@ -1,5 +1,5 @@
 import streamlit as st
-<meta name="google-site-verification" content="QkVR09fdIHwZy3gbNlK8-0pNxanAZyOQUXqSdX7ARB8" />
+import streamlit.components.v1 as components  # Required for Google Verification
 import pandas as pd
 import qrcode
 from PyPDF2 import PdfReader, PdfWriter
@@ -11,7 +11,17 @@ import shutil
 from io import BytesIO
 from streamlit_extras.buy_me_a_coffee import button
 
-# --- 1. SEO & PAGE CONFIG ---
+# --- 1. GOOGLE VERIFICATION (Must be at the top) ---
+components.html(
+    """
+    <head>
+        <meta name="google-site-verification" content="QkVR09fdIHwZy3gbNlK8-0pNxanAZyOQUXqSdX7ARB8" />
+    </head>
+    """,
+    height=0,
+)
+
+# --- 2. SEO & PAGE CONFIG ---
 st.set_page_config(
     page_title="Free Bulk QR Code Generator from URL | CSV to PDF Tool", 
     page_icon="📄", 
@@ -23,7 +33,7 @@ st.set_page_config(
     }
 )
 
-# --- 2. HIDDEN SEO TEXT (Helps Google find you) ---
+# --- 3. HIDDEN SEO TEXT ---
 st.markdown(
     """
     <div style="display:none;">
@@ -94,6 +104,7 @@ if uploaded_pdf and uploaded_csv:
                 os.makedirs(qr_folder, exist_ok=True)
                 
                 df = pd.read_csv(uploaded_csv)
+                # Check for URL column (case insensitive fix optional, but sticking to strict for now)
                 if "URL" not in df.columns:
                     st.error("❌ CSV must contain a column named 'URL'!")
                     st.stop()
@@ -182,4 +193,3 @@ with st.expander("ℹ️ How to use this Bulk QR Generator", expanded=True):
 
 # --- FLOATING COFFEE BUTTON ---
 button(username="vigneshna", floating=True, width=221)
-
