@@ -8,6 +8,8 @@ import os
 import tempfile
 import shutil
 from io import BytesIO
+import streamlit as st
+from streamlit_extras.buy_me_a_coffee import button
 
 st.set_page_config(page_title="QR Code PDF Generator", page_icon="📄", layout="wide")
 
@@ -138,7 +140,9 @@ if uploaded_pdf and uploaded_csv:
                     mime="application/pdf",
                     type="primary"
                 )
-                
+            button(username="https://buymeacoffee.com/vigneshna", floating=True, width=221)    
             except Exception as e:
                 st.error(f"Error: {e}")
+                
+
 
