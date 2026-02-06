@@ -8,17 +8,17 @@ import os
 import tempfile
 import shutil
 from io import BytesIO
-import streamlit as st
 from streamlit_extras.buy_me_a_coffee import button
 
+# --- PAGE CONFIG ---
 st.set_page_config(page_title="QR Code PDF Generator", page_icon="📄", layout="wide")
 
 st.title("📄 QR Code PDF Generator")
 
-# Sidebar for QR customization
+# --- SIDEBAR SETTINGS ---
 st.sidebar.header("⚙️ Position & Size")
 
-# --- NEW: Alignment Selector ---
+# Alignment Selector
 h_anchor = st.sidebar.radio(
     "Horizontal Reference Point:",
     ["From Right Edge", "From Left Edge"],
@@ -54,14 +54,14 @@ show_text = st.sidebar.checkbox("Show enrollment text", value=True)
 custom_text = st.sidebar.text_input("Text below QR", value="Scan your custom QR code to enroll")
 text_font_size = st.sidebar.number_input("Font Size", value=7)
 
-# Main content area
+# --- MAIN UPLOAD AREA ---
 col1, col2 = st.columns(2)
 with col1:
     uploaded_pdf = st.file_uploader("1. Upload PDF File", type=["pdf"])
 with col2:
     uploaded_csv = st.file_uploader("2. Upload CSV File (with 'URL' column)", type=["csv"])
 
-# Process button
+# --- PROCESS BUTTON ---
 if uploaded_pdf and uploaded_csv:
     if st.button("🚀 Generate PDF", type="primary"):
         with st.spinner("Processing..."):
@@ -95,21 +95,17 @@ if uploaded_pdf and uploaded_csv:
                     overlay_pdf = os.path.join(qr_folder, f"overlay_{i}.pdf")
                     c = canvas.Canvas(overlay_pdf, pagesize=letter)
                     
-                    # --- CALCULATE X/Y POSITION ---
+                    # Calculate Position
                     page_width = float(reader.pages[i].mediabox.width)
                     
                     if h_anchor == "From Right Edge":
-                        # Move Left = Increase x_input
-                        # Move Right = Decrease x_input
                         x = page_width - qr_size - x_input
                     else:
-                        # Move Left = Decrease x_input
-                        # Move Right = Increase x_input
                         x = x_input
 
                     y = y_position
                     
-                    # Draw
+                    # Draw QR & Text
                     c.drawImage(qr_path, x, y, width=qr_size, height=qr_size)
                     
                     if show_text and custom_text:
@@ -126,29 +122,26 @@ if uploaded_pdf and uploaded_csv:
                     
                     progress_bar.progress((i + 1) / total_pages)
                 
-                # Save & Download
+                # Save & Download Logic
                 output_buffer = BytesIO()
                 writer.write(output_buffer)
                 output_buffer.seek(0)
                 shutil.rmtree(temp_dir)
                 
                 st.success("✅ Done!")
+                
+                # Corrected Download Button Block
                 st.download_button(
-                    "⬇️ Download Final PDF",
+                    label="⬇️ Download Final PDF",
                     data=output_buffer,
                     file_name="output_qr.pdf",
                     mime="application/pdf",
-                    type="primary",
-            )    
-     except Exception as e:
-                st.error(f"Error: {e}")
-button(username="vigneshna", floating=True, width=221)
+                    type="primary"
+                )
                 
+            except Exception as e:
+                st.error(f"Error: {e}")
 
-
-
-
-
-
-
-
+# --- FLOATING COFFEE BUTTON ---
+# This sits outside the main logic so it always appears
+button(username="vigneshna", floating=True, width=221)
