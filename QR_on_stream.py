@@ -1,4 +1,5 @@
 import streamlit as st
+<meta name="google-site-verification" content="QkVR09fdIHwZy3gbNlK8-0pNxanAZyOQUXqSdX7ARB8" />
 import pandas as pd
 import qrcode
 from PyPDF2 import PdfReader, PdfWriter
@@ -181,3 +182,4 @@ with st.expander("ℹ️ How to use this Bulk QR Generator", expanded=True):
 
 # --- FLOATING COFFEE BUTTON ---
 button(username="vigneshna", floating=True, width=221)
+
